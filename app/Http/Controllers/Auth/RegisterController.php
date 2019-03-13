@@ -7,6 +7,7 @@ use App\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
@@ -28,7 +29,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/search';
 
     /**
      * Create a new controller instance.
@@ -50,6 +51,10 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => 'required|string|max:255',
+            'address' => 'required|string|max:250',
+            'phone' => 'required|string|max:20',
+            'rg' => 'required|string|max:20',
+            'researcher' => ['required', Rule::in(['academic','independent'])],
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -66,6 +71,10 @@ class RegisterController extends Controller
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'address' => $data['address'],
+            'phone' => $data['phone'],
+            'rg' => $data['rg'],
+            'researcher' => $data['researcher'],
             'password' => bcrypt($data['password']),
         ]);
     }

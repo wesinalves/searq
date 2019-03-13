@@ -15,11 +15,11 @@ class LevelController extends Controller
     }
     
     public function index(){
-    	$levels = Level::orderBy('created_at','desc')->paginate(10);
+    	$levels = Level::orderBy('id','desc')->paginate(10);
     	return view('level',['levels'=>$levels]);
     }
 
-    public function store(Request $request){
+    public function create(Request $request){
     	$this->validate($request,[
     		'name'=>'required|max:255',
     	]);
@@ -30,7 +30,7 @@ class LevelController extends Controller
 
     	$message = "Ocorreu um erro. Contacte o administrador";
     	if($level->save()){
-    		$massage = "Cadastro realizado com sucesso!";
+    		$message = "Cadastro realizado com sucesso!";
 
     	}
 

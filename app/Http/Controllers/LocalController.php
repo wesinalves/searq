@@ -15,14 +15,33 @@ class LocalController extends Controller
         $this->middleware('auth:admin');
     }
     
-    public function index(){
-    	$locales = Local::orderBy('created_at','desc')->paginate(10);
-    	return view('local',['locales'=>$locales]);
+    public function index(Request $request){
+        $this->validate($request,[
+                'search'=>'nullable|alpha|min:3'
+            ]);
+
+    	$locales = Local::orderBy('name','asc');
+
+        $clear = 0;
+        if($request->input('search') != null){
+            $locales = $locales->where('name','like','%'.$request->input('search').'%');
+            $request->session()->put('session_local',$request->input('search'));
+            $clear = 1;
+        }
+
+        if($request->session()->get('session_local') != null){
+            $locales = $locales->where('name','like','%'.$request->session()->get('session_local').'%');
+            $clear = 1;
+        }
+
+        $locales = $locales->paginate(50);
+
+    	return view('local',['locales'=>$locales,'clear'=>$clear]);
     }
 
     public function create(Request $request){
     	$this->validate($request,[
-    		'name'=>'required|max:255',
+    		'name'=>'unique:locales|required|max:255',
     	]);
 
     	
@@ -38,9 +57,22 @@ class LocalController extends Controller
     	return redirect()->route('local')->with(['message'=>$message]);
     }
 
+    public function create_ajax(Request $request){
+        $this->validate($request,[
+            'name'=>'unique:locales|required|max:255',
+        ]);
+
+        
+        $local = new Local();
+        $local->name = $request['name'];
+        $local->save();
+
+        return $local->id;
+    }
+
     public function update(Request $request){
     	$this->validate($request,[
-    			'name'=>'required|max:255',
+    			'name'=>'unique:locales|required|max:255',
     		]);
 
     	$local = Local::find($request['id']);
@@ -65,6 +97,13 @@ class LocalController extends Controller
 
     	return redirect()->route('local')->with(['message'=>'Registro deletado com sucesso.']);
 
+    }
+
+    public function delete_session(Request $request){    
+        
+        $request->session()->forget('session_local');
+
+        return redirect()->route('local');
     }
 
     public function attach(Request $request){
@@ -97,5 +136,14 @@ class LocalController extends Controller
 
         return null;
 
+    }
+
+    public function get_collections($local_id){
+        $local = Local::where('id', $local_id)->first();
+        if(!Auth::user()){
+            return redirect()->back();
+        }
+        
+        return view('local-collections',['collections'=>$local->collections()->paginate(50),'local'=>$local]);
     }
 }

@@ -15,14 +15,33 @@ class ProducerController extends Controller
         $this->middleware('auth:admin');
     }
     
-    public function index(){
-    	$producers = Producer::orderBy('created_at','desc')->paginate(10);
-    	return view('producer',['producers'=>$producers]);
+    public function index(Request $request){
+         $this->validate($request,[
+                'search'=>'nullable|alpha|min:3'
+            ]);
+
+    	$producers = Producer::orderBy('name','asc');
+    	
+        $clear = 0;
+        if($request->input('search') != null){
+            $producers = $producers->where('name','like','%'.$request->input('search').'%');
+            $request->session()->put('session_producer',$request->input('search'));
+            $clear = 1;
+        }
+
+        if($request->session()->get('session_producer') != null){
+            $producers = $producers->where('name','like','%'.$request->session()->get('session_producer').'%');
+            $clear = 1;
+        }
+
+        $producers = $producers->paginate(50);
+
+        return view('producer',['producers'=>$producers,'clear'=>$clear]);
     }
 
     public function create(Request $request){
     	$this->validate($request,[
-    		'name'=>'required|max:255',
+    		'name'=>'unique:producers|required|max:255',
     	]);
 
     	
@@ -31,16 +50,29 @@ class ProducerController extends Controller
 
     	$message = "Ocorreu um erro. Contacte o administrador";
     	if($producer->save()){
-    		$massage = "Cadastro realizado com sucesso!";
+    		$message = "Cadastro realizado com sucesso!";
 
     	}
 
     	return redirect()->route('producer')->with(['message'=>$message]);
     }
 
+    public function create_ajax(Request $request){
+        $this->validate($request,[
+            'name'=>'unique:producers|required|max:255',
+        ]);
+
+        
+        $producer = new Producer();
+        $producer->name = $request['name'];
+        $producer->save();
+
+        return $producer->id;
+    }
+
     public function update(Request $request){
     	$this->validate($request,[
-    			'name'=>'required|max:255',
+    			'name'=>'unique:producers|required|max:255',
     		]);
 
     	$producer = Producer::find($request['id']);
@@ -65,6 +97,13 @@ class ProducerController extends Controller
 
     	return redirect()->route('producer')->with(['message'=>'Registro deletado com sucesso.']);
 
+    }
+
+    public function delete_session(Request $request){    
+        
+        $request->session()->forget('session_producer');
+
+        return redirect()->route('producer');
     }
 
     public function attach(Request $request){
@@ -97,5 +136,14 @@ class ProducerController extends Controller
 
         return null;
 
+    }
+
+    public function get_collections($producer_id){
+        $producer = Producer::where('id', $producer_id)->first();
+        if(!Auth::user()){
+            return redirect()->back();
+        }
+        
+        return view('producer-collections',['collections'=>$producer->collections()->paginate(50),'producer'=>$producer]);
     }
 }

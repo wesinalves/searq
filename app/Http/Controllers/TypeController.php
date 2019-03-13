@@ -15,14 +15,33 @@ class TypeController extends Controller
         $this->middleware('auth:admin');
     }
     
-    public function index(){
-    	$types = Type::orderBy('created_at','desc')->paginate(10);
-    	return view('type',['types'=>$types]);
+    public function index(Request $request){
+        $this->validate($request,[
+                'search'=>'nullable|alpha|min:3'
+            ]);
+
+    	$types = Type::orderBy('name','asc');
+        
+        $clear = 0;
+        if($request->input('search') != null){
+            $types = $types->where('name','like','%'.$request->input('search').'%');
+            $request->session()->put('session_type',$request->input('search'));
+            $clear = 1;
+        }
+
+        if($request->session()->get('session_type') != null){
+            $types = $types->where('name','like','%'.$request->session()->get('session_type').'%');
+            $clear = 1;
+        }
+
+        $types = $types->paginate(50);
+
+    	return view('type',['types'=>$types,'clear'=>$clear]);
     }
 
     public function create(Request $request){
     	$this->validate($request,[
-    		'name'=>'required|max:255',
+    		'name'=>'unique:types|required|max:255',
     	]);
 
     	
@@ -31,16 +50,29 @@ class TypeController extends Controller
 
     	$message = "Ocorreu um erro. Contacte o administrador";
     	if($type->save()){
-    		$massage = "Cadastro realizado com sucesso!";
+    		$message = "Cadastro realizado com sucesso!";
 
     	}
 
     	return redirect()->route('type')->with(['message'=>$message]);
     }
 
+    public function create_ajax(Request $request){
+        $this->validate($request,[
+            'name'=>'unique:types|required|max:255',
+        ]);
+
+        
+        $type = new Type();
+        $type->name = $request['name'];
+        $type->save();
+
+        return $type->id;
+    }
+
     public function update(Request $request){
     	$this->validate($request,[
-    			'name'=>'required|max:255',
+    			'name'=>'unique:types|required|max:255',
     		]);
 
     	$type = Type::find($request['id']);
@@ -65,6 +97,13 @@ class TypeController extends Controller
 
     	return redirect()->route('type')->with(['message'=>'Registro deletado com sucesso.']);
 
+    }
+
+    public function delete_session(Request $request){    
+        
+        $request->session()->forget('session_type');
+
+        return redirect()->route('type');
     }
 
     public function attach(Request $request){
@@ -97,6 +136,15 @@ class TypeController extends Controller
 
         return null;
 
+    }
+
+    public function get_collections($type_id){
+        $type = Type::where('id', $type_id)->first();
+        if(!Auth::user()){
+            return redirect()->back();
+        }
+        
+        return view('type-collections',['collections'=>$type->collections()->paginate(50),'type'=>$type]);
     }
 
     

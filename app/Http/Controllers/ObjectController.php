@@ -21,21 +21,25 @@ class ObjectController extends Controller
     }
 
     public function attach(Request $request){
+
+        
     	$this->validate($request,[
     		'collection_id'=>'required|integer',
     		'path' => 'required',
-    		'type' => ['required', Rule::in(['pdf','jpeg'])],
+    		'type' => ['required', Rule::in(['pdf','jpg'])],
     	]);
 
     	if(!Auth::user()){
     		return redirect()->back();
     	}
 
+
+
     	$object = new Object();
-        if($request->input('type')=='jpeg')
-    	   $object->path = $request->file('path')->store('images');
-        elseif($reques->input('type')=='pdf')
-           $object->path = $request->file('path')->store('pdfs');
+        if($request->input('type')=='jpg')
+    	   $object->path = $request->file('path')->storeAs('images', $request->file('path')->getClientOriginalName());
+        elseif($request->input('type')=='pdf')
+           $object->path = $request->file('path')->storeAs('pdfs', $request->file('path')->getClientOriginalName());
 
     	$object->type = $request->input('type');
 

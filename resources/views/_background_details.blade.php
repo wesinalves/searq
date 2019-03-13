@@ -3,7 +3,7 @@
   @if(count($collection->objects()->where('type','jpg')->get()) > 0)
   <img src="{{Storage::url($collection->objects()->where('type','jpg')->first()->path)}}" class="rounded float-right img-thumbnail" alt="{{Storage::url($collection->objects()->where('type','jpg')->first()->path)}}" style="width:150px">
   @endif
-  <p>{{$collection->content}}</p>
+  <h5>{{$collection->content}}</h5>
   <p class="text-warning">{{$collection->code}}</p>
   <p>{{$collection->start_date}} - {{$collection->end_date}}</p>
   <p>{{$collection->level->name}}</p>
@@ -26,17 +26,12 @@
     <tbody>
 
 	   @foreach($collection->getAttributes() as $key => $attribute)
-      @if($key == 'level_id')
+      @if($attribute != '')
 	   		<tr>
           <th scope="row">@lang("collection.$key")</th>
-          <td>{{$collection->level->name}}</td>	            
+          <td>{{$attribute}}</td>	            
        </tr>
-      @else
-        <tr>
-          <th scope="row">@lang("collection.$key")</th>
-          <td>{{$attribute}}</td>             
-       </tr>
-      @endif
+       @endif
      @endforeach
 
    </table>
@@ -55,7 +50,7 @@
           <div class="tab-content" id="nav-tabContent">
             @foreach($collection->notes as $index=>$note)
             <div class="tab-pane fade {{($index==0)?'show active':''}}" id="list-{{$note->type}}" role="tabpanel" aria-labelledby="list-{{$note->type}}-list">{{$note->description}}
-              <a id="{{$note->id}}" href="{{route('note.detach',['note_id'=>$note->id])}}" class="delnote text-danger" title="Remover item">(x)</a>
+              
             </div>
             @endforeach
           </div>
@@ -72,7 +67,7 @@
   <br>
 
   <!-- entities related to collection -->
-  @include('_collection_relations')
+  @include('_background_relations')
   
 	
 </div>

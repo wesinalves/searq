@@ -3,59 +3,43 @@
 @section('content')
 <!-- Begin page content -->
     <main role="main" class="container ">
+    <nav aria-label="breadcrumb">
+     <ol class="breadcrumb">
+       <li class="breadcrumb-item"><a href="{{route('search')}}">Home</a></li>
+       <li class="breadcrumb-item active" aria-current="page">Pesquisa</li>
+     </ol>
+   </nav>
       <div class="mt-3">
         <h1>Pesquisa de Acervo</h1>
       </div>
-      <form class="form-inline">
-        <div class="form-group">
-          <label for="inputPassword6">Tipo de documento</label>
-          <input type="text" id="inputPassword6" class="form-control mx-sm-3" >
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-            <label class="form-check-label" for="inlineRadio1">Iniciado por...</label>
+      
+      <form action="{{route('results')}}" method="get">
+        <div class="form-row align-items-center">
+          <div class="col-sm-10 my-1">
+            <label class="sr-only" for="inlineFormInputName">Name</label>
+            <input type="text" class="form-control" id="content" name="content" placeholder="Insira o termo a ser pesquisado" autofocus>
           </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-            <label class="form-check-label" for="inlineRadio2">Contendo</label>
+                 
+          <div class="col-auto my-1">
+            <button type="submit" class="btn btn-primary">Pesquisar</button>
           </div>
-          
         </div>
-        <button type="submit" class="btn btn-primary mb-2">Pesquisar</button>
-      </form>
 
-      <form>
-      	<p>Busca Rápida A B C D E F G H I J L M N O P Q R S T U V X Z</p>
       </form>
+      <div class="mt-3">
+        <h3>Pesquisar por descritores:</h3>
+        <ul>
+          <li><a href="{{route('search_by',['descritor'=>'subject'])}}">Assunto</a></li>
+          <li><a href="{{route('search_by',['descritor'=>'type'])}}">Tipologia documental</a></li>
+          <li><a href="{{route('search_by',['descritor'=>'producer'])}}">Produtor</a></li>
+          <li><a href="{{route('search_by',['descritor'=>'local'])}}">Local</a></li>
+          <li><a href="{{route('advanced_search')}}">Pesquisa avançada</a></li>
 
-      <form action="{{route('results')}}">
-      	<div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-            <label class="form-check-label" for="inlineRadio1">Todos os selecionados</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-            <label class="form-check-label" for="inlineRadio2">Qualquer um dos selecionados</label>
-          </div>
-
-          <div class="form-group">
-              <label for="exampleFormControlSelect2">Termos disponíveis: 465</label>
-              <select multiple class="form-control" id="exampleFormControlSelect2">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>5</option>
-                <option>5</option>
-                <option>5</option>
-                <option>5</option>
-                <option>5</option>
-                <option>5</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary mb-2">Pesquisar</button>
-      </form>
+        </ul>
+      </div>
 
       
+
+
     </main>
 @endsection

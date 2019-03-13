@@ -10,7 +10,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>SEARQ - Instituto Evandro Chagas</title>
+    <title>Memory - Base de Memórias do Instituto Evandro Chagas</title>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -31,7 +31,7 @@
 
                     <!-- Branding Image -->
                     <a class="navbar-brand" href="{{ url('/admin') }}">
-                        SEARQ
+                        Memory
                     </a>
                 </div>
 
@@ -46,7 +46,7 @@
                         <!-- Authentication Links -->
                         @guest
                             <li><a href="{{ route('admin.login') }}">Login</a></li>
-                            <li><a href="{{ route('admin.register') }}">Register</a></li>
+        
                         @else
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true">

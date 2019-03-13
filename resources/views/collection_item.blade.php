@@ -5,8 +5,8 @@
   <nav aria-label="breadcrumb">
      <ol class="breadcrumb">
        <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Home</a></li>
-       <li class="breadcrumb-item"><a href="{{route('collection.view',['collection_id'=>$collection->id])}}">Fundo</a></li>
-       @if(isset($collection->collection->collection))
+       <li class="breadcrumb-item"><a href="{{route('collection.view',['collection_id'=>$collection->id])}}">Fundos</a></li>
+      @if(isset($collection->collection->collection))
           <li class="breadcrumb-item"><a href="{{route('collection.view',['collection_id'=>$collection->collection->collection->id])}}">{{str_limit($collection->collection->collection->title,50)}}</a></li>
         @endif
         @if(isset($collection->collection))
@@ -17,7 +17,7 @@
        <li class="breadcrumb-item active" aria-current="page">Cadastrar</li>
      </ol>
   </nav>
-   <h1>Cadastrar Grupos/Subgrupos/Séries e Subséries</h1>
+   <h1>Cadastrar Itens/Dossiê</h1>
 
    @if ($errors->any())
        <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -82,6 +82,24 @@
         </div>
         
         </fieldset>
+
+        <fieldset>
+          <legend>2. Área de contextualização</legend>
+          <div class="form-row">
+                              
+            <div class="form-group col-md-4">
+              <label for="producer">Nomes dos produtores</label> <a href="#producerModal" data-toggle="modal"><img src="{{ asset('images/add-icon.png')}}"></a>
+              <select id="producer" name="producers[]" class="custom-select custom-select-sm js-example-basic-multiple" multiple>
+                @foreach($producers as $producer)
+                  <option value="{{ $producer->id }}">{{ $producer->name }}</option>
+                @endforeach
+                
+              </select>
+            </div>
+
+          </div>
+        
+        </fieldset>
       
         <fieldset>
           <legend>3. Área de conteúdo e estrutura</legend>
@@ -91,11 +109,70 @@
               <label for="content">Âmbito e conteúdo</label>
               <textarea class="form-control " id="content" name="content" cols="250" rows="5"></textarea>
             </div>        
+            
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>4. Área de condições de acesso e uso</legend>
+          
+          <div class="form-row">
+          
             <div class="form-group col-md-4">
-              <label for="level_system">Sistema de arranjo</label>
-              <textarea class="form-control " id="level_system" name="level_system" cols="250" rows="5"></textarea>
+              <label for="level">Condições de Acesso</label>
+              <select id="access" name="access" class="custom-select">
+                  <option value="">Selecione ...</option>
+                  <option value="restricted">Restrito</option>
+                  <option value="private">Pessoal</option>
+                  <option value="public">Publico</option>
+                
+              </select>
+            </div>  
+
+            
+          
+            <div class="form-group col-md-4">
+              <label for="idiom">Idioma</label> <a href="#idiomModal" data-toggle="modal"><img src="{{ asset('images/add-icon.png')}}"></a>
+              <select id="idiom" name="idioms[]" class="custom-select custom-select-sm js-example-basic-multiple" multiple>
+                @foreach($idioms as $idiom)
+                  <option value="{{ $idiom->id }}">{{ $idiom->name }}</option>
+                @endforeach
+              </select>
             </div>
           </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>8. Área de pontos de acesso e indexação de assuntos</legend>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="type">Tipologia documental</label> <a href="#typeModal" data-toggle="modal"><img src="{{ asset('images/add-icon.png')}}"></a>
+              <select id="type" class="custom-select custom-select-sm js-example-basic-multiple" name="types[]" multiple>
+                @foreach($types as $type)
+                  <option value="{{ $type->id }}">{{ $type->name }}</option>
+                @endforeach
+              </select>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label for="subject">Assunto</label> <a href="#subjectModal" data-toggle="modal"><img src="{{ asset('images/add-icon.png')}}"></a>
+              <select id="subject" name="subjects[]" class="custom-select custom-select-sm js-example-basic-multiple" multiple>
+                @foreach($subjects as $subject)
+                  <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                @endforeach
+              </select>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label for="local">Locais</label> <a href="#localModal" data-toggle="modal"><img src="{{ asset('images/add-icon.png')}}"></a>
+              <select id="local" name="locales[]" class="custom-select custom-select-sm js-example-basic-multiple" multiple>
+                @foreach($locales as $local)
+                  <option value="{{ $local->id }}">{{ $local->name }}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+
         </fieldset>
 
         <fieldset id="add_fields" class="d-none">
@@ -151,4 +228,5 @@
   
 
 </script>
+
 @endsection

@@ -12,7 +12,7 @@ class AdminLoginController extends Controller
 
     public function __construct()
     {
-      $this->middleware('guest:admin')->except('logout');
+      $this->middleware('auth:admin')->except(['showLoginForm','login']);
     }
     public function showLoginForm()
     {
@@ -45,7 +45,8 @@ class AdminLoginController extends Controller
         'email'   => 'required|email',
         'name'   => 'required',
         'job_title'   => 'required',
-        'password' => 'required|min:6'
+        'password' => 'required|min:6',
+        'password_confirmation'   => 'required|same:password',
       ]);
 
       $admin = new Admin();
@@ -56,12 +57,52 @@ class AdminLoginController extends Controller
 
       $message = "Ocorreu um erro. Contacte o administrador";
       if($admin->save()){
-        $massage = "Cadastro realizado com sucesso!";
+        $message = "Cadastro realizado com sucesso!";
 
       }
 
-      return redirect()->route('admin.dashboard')->with(['message'=>$message]); // I need to change the route to something like admin.create
+      return redirect()->route('user')->with(['message'=>$message]); // I need to change the route to something like admin.create
 
+    }
+
+    public function update(Request $request)
+    {
+      // Validate the form data
+      $this->validate($request, [
+        'email'   => 'required|email',
+        'name'   => 'required',
+        'job_title'   => 'required',
+        'id' => 'required',
+      ]);
+
+      $admin = Admin::find($request->input('id'));
+      $admin->name = $request->input('name');
+      $admin->email = $request->input('email');
+      $admin->job_title = $request->input('job_title');
+
+      $message = "Ocorreu um erro. Contacte o administrador";
+      if($admin->save()){
+        $message = "Alteração realizado com sucesso!";
+
+      }
+
+      return redirect()->route('user')->with(['message'=>$message]); // I need to change the route to something like admin.create
+
+    }
+
+    public function delete($admin_id){
+       if(ctype_digit($admin_id))
+            $admin = Admin::find($admin_id);
+        else
+            return redirect()->route('admin.dashboard')->with(['message'=>'Não tente invadir o sistema. Você não vai conseguir!']);
+
+        if(!Auth::user()){
+            return redirect()->back();
+        }
+
+        $admin->delete();
+
+        return redirect()->route('user')->with(['message'=>'Registro deletado com sucesso.']);
     }
 
     public function logout(Request $request){
@@ -70,4 +111,42 @@ class AdminLoginController extends Controller
       return redirect()->route( 'admin.login' );
       
     }
+
+    public function perfil($admin_id){
+      if(ctype_digit($admin_id))
+          $admin = Admin::find($admin_id);
+      else
+          return redirect()->route('admin.dashboard')->with(['message'=>'Não tente invadir o sistema. Você não vai conseguir!']);
+
+      if(Auth::user() != $admin){
+            return redirect()->back();
+        }
+
+
+      return view('perfil_admin',['admin'=>$admin]);
+      
+    }
+
+    public function update_password(Request $request)
+    {
+      // Validate the form data
+      $this->validate($request, [
+        'password'   => 'required|min:6',
+        'password_confirmation'   => 'required|same:password',
+        'id' => 'required',
+      ]);
+
+      $admin = Admin::find($request->input('id'));
+      $admin->password = bcrypt($request->input('password'));
+
+      $message = "Ocorreu um erro. Contacte o administrador";
+      if($admin->save()){
+        $message = "Alteração realizado com sucesso!";
+
+      }
+
+      return redirect()->route('admin.perfil',['admin_id'=>$admin->id])->with(['message'=>$message]); // I need to change the route to something like admin.create
+
+    }
+  
 }

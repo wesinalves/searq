@@ -9,8 +9,36 @@
      </ol>
    </nav>
    <h1>Assunto</h1>
+   @if ($errors->any())
+       <div class="alert alert-danger alert-dismissible fade show" role="alert">
+           <ul>
+               @foreach ($errors->all() as $error)
+                   <li>{{ $error }}</li>
+               @endforeach
+           </ul>
+           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+       </div>
+   @endif
+   
+   @if (session('message'))
+     <div class="alert alert-success alert-dismissible fade show" role="alert">
+         {{ session('message') }}
+         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+     </div>
+    @endif
    <div class="row">
      <div class='col-md-6'>
+      <form action="{{route('subject')}}" id="search-form">
+        <div class="form-group">
+            <label for='name' class='sr-only'>Pesquisa</label>
+            <input type="text" class="form-control" id="search" name="search" placeholder="pesquisar" onchange="event.preventDefault();
+                           document.getElementById('search-form').submit();" value="{{session('session_subject')}}">
+        </div>
+      </form>
       <table class="table">
         <thead>
           <tr>
@@ -24,7 +52,7 @@
           @foreach($subjects as $index=>$subject)
           <tr>
             <th scope="row">{{++$index + $subjects->perPage() * ($subjects->currentPage() - 1)}}</th>
-            <td>{{$subject->name}}</td>
+            <td><a href="{{route('subject.get_collections',['subject_id'=>$subject->id])}}">{{$subject->name}}</a></td>
             <td align="right"><button type="button" class="btn btn-success" id="editSubject" data-subject="{{$subject}}">Editar</button>
             <a href="{{route('subject.delete',['subject_id'=>$subject->id])}}" class="btn btn-danger">Excluir</a></td>
            </tr>
@@ -35,6 +63,10 @@
       </table>
 
     {{$subjects->links()}}
+
+    @if($clear)
+      <a class="btn btn-primary" href="{{route('subject.delete_session')}}">Limpar</a>
+    @endif
     </div>
     <div class="col-md-6">
       <div class="card">
@@ -43,7 +75,7 @@
           <form action="{{route('subject.create')}}" method="post">
             <div class="form-group">
             <label for='name' >Nome</label>
-            <input type="text" class="form-control" id="name" name="name">
+            <input type="text" class="form-control" id="name" name="name" >
             </div>
 
             {{ csrf_field() }}

@@ -54,9 +54,9 @@ class Collection extends Model
         return $this->hasMany('App\Collection');
     }
 
-    public function fields()
+    public function collection()
     {
-        return $this->belongsToMany('App\Role');
+        return $this->belongsTo('App\Collection');
     }
 
     public function producers()

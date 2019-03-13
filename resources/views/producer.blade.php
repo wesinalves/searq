@@ -11,8 +11,36 @@
      </ol>
    </nav>
    <h1>Produtor</h1>
+   @if ($errors->any())
+       <div class="alert alert-danger alert-dismissible fade show" role="alert">
+           <ul>
+               @foreach ($errors->all() as $error)
+                   <li>{{ $error }}</li>
+               @endforeach
+           </ul>
+           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+       </div>
+   @endif
+   
+    @if (session('message'))
+     <div class="alert alert-success alert-dismissible fade show" role="alert">
+         {{ session('message') }}
+         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+     </div>
+    @endif
    <div class="row">
      <div class='col-md-6'>
+      <form action="{{route('producer')}}" id="search-form">
+        <div class="form-group">
+            <label for='name' class='sr-only'>Pesquisa</label>
+            <input type="text" class="form-control" id="search" name="search" placeholder="pesquisar" onchange="event.preventDefault();
+                           document.getElementById('search-form').submit();" value="{{session('session_producer')}}">
+        </div>
+      </form>
       <table class="table">
         <thead>
           <tr>
@@ -26,7 +54,7 @@
           @foreach($producers as $index=>$producer)
           <tr>
             <th scope="row">{{++$index + $producers->perPage() * ($producers->currentPage() - 1)}}</th>
-            <td>{{$producer->name}}</td>
+            <td><a href="{{route('producer.get_collections', ['producer_id'=>$producer->id])}}">{{$producer->name}}</a></td>
             <td align="right"><button type="button" class="btn btn-success" id="editProducer" data-producer="{{$producer}}">Editar</button>
             <a href="{{route('producer.delete',['producer_id'=>$producer->id])}}" class="btn btn-danger">Excluir</a></td>
            </tr>
@@ -37,6 +65,9 @@
       </table>
 
     {{$producers->links()}}
+    @if($clear)
+      <a class="btn btn-primary" href="{{route('producer.delete_session')}}">Limpar</a>
+    @endif
     </div>
     <div class="col-md-6">
       <div class="card">
@@ -89,4 +120,7 @@
     </div>
   </div>
 </div>
+
+
+
 @endsection

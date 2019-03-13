@@ -9,8 +9,36 @@
      </ol>
    </nav>
    <h1>Locais</h1>
+   @if ($errors->any())
+       <div class="alert alert-danger alert-dismissible fade show" role="alert">
+           <ul>
+               @foreach ($errors->all() as $error)
+                   <li>{{ $error }}</li>
+               @endforeach
+           </ul>
+           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+       </div>
+   @endif
+   
+   @if (session('message'))
+     <div class="alert alert-success alert-dismissible fade show" role="alert">
+         {{ session('message') }}
+         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+     </div>
+    @endif
    <div class="row">
      <div class='col-md-6'>
+      <form action="{{route('local')}}" id="search-form">
+        <div class="form-group">
+            <label for='name' class='sr-only'>Pesquisa</label>
+            <input type="text" class="form-control" id="search" name="search" placeholder="pesquisar" onchange="event.preventDefault();
+                           document.getElementById('search-form').submit();" value="{{session('session_local')}}">
+        </div>
+      </form>
       <table class="table">
         <thead>
           <tr>
@@ -24,7 +52,7 @@
           @foreach($locales as $index=>$local)
           <tr>
             <th scope="row">{{++$index + $locales->perPage() * ($locales->currentPage() - 1)}}</th>
-            <td>{{$local->name}}</td>
+            <td><a href="{{route('local.get_collections',['local_id'=>$local->id])}}">{{$local->name}}</a</td>
             <td align="right"><button type="button" class="btn btn-success" id="editLocal" data-local="{{$local}}">Editar</button>
             <a href="{{route('local.delete',['local_id'=>$local->id])}}" class="btn btn-danger">Excluir</a></td>
            </tr>
@@ -35,7 +63,10 @@
       </table>
 
     {{$locales->links()}}
-    </div>
+    @if($clear)
+      <a class="btn btn-primary" href="{{route('local.delete_session')}}">Limpar</a>
+    @endif
+    </div>    
     <div class="col-md-6">
       <div class="card">
         <div class="card-body">
