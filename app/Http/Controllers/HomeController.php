@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
 
 
 
+
 class HomeController extends Controller
 {
     use AuthenticatesUsers;
@@ -94,32 +95,45 @@ class HomeController extends Controller
 
     }
 
-    public function search_by($descritor){
+    public function search_by($descritor, $letter=null){
         
         switch ($descritor) {
           case 'subject':
-            $data_provider = Subject::all();
+            $data_provider = Subject::orderBy('name','asc')->get();
             $name_descritor = "Assunto";
+            $class = "App\Subject";
             break;
           case 'type':
-            $data_provider = Type::all();
+            $data_provider = Type::orderBy('name','asc')->get();
             $name_descritor = "Tipologia documental";
+            $class = "App\Type";
             break;
           case 'producer':
-            $data_provider = Producer::all();
+            $data_provider = Producer::orderBy('name','asc')->get();
             $name_descritor = "Produtor";
+            $class = "App\Producer";
             break;
           case 'local':
-            $data_provider = Local::all();
+            $data_provider = Local::orderBy('name','asc')->get();
             $name_descritor = "Local";
+            $class = "App\Local";
             break;
         }
 
         $letters = explode(" ", "A B C D E F G H I J L M N O P Q R S T U V X Z");
 
+        if($letter != null){
+          $data_provider = $class::where('name','LIKE', $letter.'%')->get();                   
+        }
+
+        
+
         return view('search_descritors',['descritor'=>$descritor, 'data_provider'=>$data_provider,'name_descritor'=>$name_descritor, 'letters'=>$letters]);
 
     }
+
+
+
 
     public function perfil($user_id){
 

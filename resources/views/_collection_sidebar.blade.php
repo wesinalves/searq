@@ -2,27 +2,32 @@
     <div class="widget">
       <!-- Level widget -->
       <h4 class="text-info">Subníveis</h4>
-      @if(count($collection->collections) > 0)
-        <ul class="list-group">
-        @foreach($collection->collections()->orderBy('id','asc')->paginate(15) as $index=>$sub_collection)
-          <li class="list-group-item"><a href="{{route('collection.view',['collection_id'=>$sub_collection->id])}}">{{($sub_collection->level->name == 'item' or $sub_collection->level->name == 'dossie')? substr($sub_collection->code, -4): ''}} {{$sub_collection->level->name}}-{{str_limit($sub_collection->title,30)}} </a>
-            @if(count($sub_collection->collections) > 0)
-            <img src="{{asset('images/arrow-down.png')}}" alt="exibir mais" data-toggle="collapse" href="#collapseLevel{{$index}}" role="button" aria-expanded="false" aria-controls="collapseLevel" style="cursor:pointer">
-              <div class="collapse" id="collapseLevel{{$index}}">
-                @foreach($sub_collection->collections()->orderBy('id','asc')->paginate(5) as $sub_collection2)
-                  <a class= "text-secondary" href="{{route('collection.view',['collection_id'=>$sub_collection2->id])}}">- {{$sub_collection2->level->name}}-{{str_limit($sub_collection2->title,30)}} </a><br>
-                @endforeach
-                @if(count($sub_collection->collections) > 5)
-                  <a class= "text-secondary" href="{{route('collection.view',['collection_id'=>$sub_collection->id])}}">mais...</a>
-                @endif
-              </div>
-            @endif
-          </li>
-        @endforeach
-        </ul>
-        <br>
 
-        {{$collection->collections()->orderBy('title','desc')->paginate(15)->links()}}
+        @if(count($collection->collections) > 0)
+        <div class="scrollbar" id="style-1">
+          <ul class="list-group">
+          @foreach($collection->collections()->orderBy('id','asc')->paginate(50) as $index=>$sub_collection)
+            <li class="list-group-item"><a href="{{route('collection.view',['collection_id'=>$sub_collection->id])}}">{{($sub_collection->level->name == 'item' or $sub_collection->level->name == 'dossie')? substr($sub_collection->code, -4): ''}} {{$sub_collection->level->name}}-{{str_limit($sub_collection->title,30)}} </a>
+              @if(count($sub_collection->collections) > 0)
+              <img src="{{asset('images/arrow-down.png')}}" alt="exibir mais" data-toggle="collapse" href="#collapseLevel{{$index}}" role="button" aria-expanded="false" aria-controls="collapseLevel" style="cursor:pointer">
+                <div class="collapse" id="collapseLevel{{$index}}">
+                  @foreach($sub_collection->collections()->orderBy('id','asc')->paginate(5) as $sub_collection2)
+                    <a class= "text-secondary" href="{{route('collection.view',['collection_id'=>$sub_collection2->id])}}">- {{$sub_collection2->level->name}}-{{str_limit($sub_collection2->title,30)}} </a><br>
+                  @endforeach
+                  @if(count($sub_collection->collections) > 5)
+                    <a class= "text-secondary" href="{{route('collection.view',['collection_id'=>$sub_collection->id])}}">mais...</a>
+                  @endif
+                </div>
+              @endif
+            </li>
+          @endforeach
+          </ul>
+          
+      </div>
+
+
+        {{$collection->collections()->orderBy('title','desc')->paginate(50)->links()}}
+
       @else
         <p class="text-muted">Nenhum cadastrado</p>
       @endif

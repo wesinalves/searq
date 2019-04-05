@@ -1,7 +1,7 @@
  <div class='col-md-9'>
   <!-- collection identification -->
   @if(count($collection->objects()->where('type','jpg')->get()) > 0)
-  <img src="{{Storage::url($collection->objects()->where('type','jpg')->first()->path)}}" class="rounded float-right img-thumbnail" alt="{{Storage::url($collection->objects()->where('type','jpg')->first()->path)}}" style="width:150px">
+  <img src="{{Storage::url($collection->objects()->where('type','jpg')->first()->path)}}" class="rounded float-right img-thumbnail" alt="{{Storage::url($collection->objects()->where('type','jpg')->first()->path)}}">
   @endif
   <p>{{$collection->content}}</p>
   <p class="text-warning">{{$collection->code}}</p>

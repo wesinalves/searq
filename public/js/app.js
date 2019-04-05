@@ -74,6 +74,75 @@ $('button#editLocal').click(function(event){
 
 });
 
+$('button#editIdiom').click(function(event){
+	event.preventDefault();
+
+		
+	var idiom = JSON.parse(event.target.dataset['idiom']);
+	idiom_id = idiom.id
+	name = idiom.name
+	initials = idiom.initials
+
+	$('#idiom_id2').val(idiom_id)
+	$('#name2').val(name)
+	$('#initials2').val(initials)
+
+	$('#edit-modal').modal();
+
+});
+
+$('button#editAdmin').click(function(event){
+	event.preventDefault();
+
+		
+	var admin = JSON.parse(event.target.dataset['admin']);
+	admin_id = admin.id
+	name = admin.name
+	email = admin.email
+	job_title = admin.job_title
+
+
+	$('#admin_id2').val(admin_id)
+	$('#name2').val(name)
+	$('#email2').val(email)
+	$('#job_title2').val(job_title)
+
+
+	$('#edit-modal').modal();
+
+});
+
+$('button#editUser').click(function(event){
+	event.preventDefault();
+
+		
+	var user = JSON.parse(event.target.dataset['user']);
+	user_id = user.id
+	name = user.name
+	email = user.email
+	rg = user.rg
+	address = user.address
+	phone = user.phone
+	researcher = user.researcher
+
+
+	$('#user_id3').val(user_id)
+	$('#name3').val(name)
+	$('#email3').val(email)
+	$('#rg3').val(rg)
+	$('#address3').val(address)
+	$('#phone3').val(phone)
+	if(researcher == 'academic')
+		$('#researcher1').val(['academic'])
+	else if(researcher == 'independent')
+		$('#researcher2').val(['independent'])
+
+
+	$('#edit-modal-user').modal();
+
+});
+
+
 $('select#slc_producer').change(function(event){
 	event.preventDefault();
 	producer_id = this.value
@@ -300,9 +369,11 @@ $('a.delobject').click(function(event){
 
 
 
-$('input#customFile').change(function(event){
+$('#customFile').change(function(event){
+	var type = this.value.split(".")[1]
 	event.target.nextSibling.nextSibling.innerText = this.value;
-	$('form#formObject').submit();
+	$('#object_type').val(type)
+	$('#formObject').submit();
 });
 
 $('#slc_level').change(function(event){
@@ -326,11 +397,161 @@ $('#slc_field').change(function(event){
 $(document).on('click', '.del_field', function(event){
 	$(event.target.parentNode.parentNode).remove()
 	number_fields = number_fields - 1
-	console.log(number_fields)
 	if(number_fields == 0)
 		$('#add_fields').addClass('d-none')
 });
 
+$('#btn_producer').click(function(event){
+	event.preventDefault();	
+	var producer_name = $('#txt_producer').val()
+	
+	$.ajax({
+			method: 'POST',
+			url: url_createproducer,	
+			data: {name: producer_name, _token: token}
+		})
+		.done(function(data){
+			$('#producer').append($('<option>', {
+			    value: data,
+			    text: producer_name,
+			    selected: true
+			}));
+			
+		})	
+	
+	$('#producerModal').modal('hide');
+});
+
+$('#btn_idiom').click(function(event){
+	event.preventDefault();	
+	var idiom_name = $('#txt_idiom').val()
+	var idiom_initials = $('#txt_initials').val()
+	
+	$.ajax({
+			method: 'POST',
+			url: url_createidiom,	
+			data: {name: idiom_name, initials: idiom_initials, _token: token}
+		})
+		.done(function(data){
+			$('#idiom').append($('<option>', {
+			    value: data,
+			    text: idiom_name,
+			    selected: true
+			}));
+			
+		})	
+	
+	$('#idiomModal').modal('hide');
+});
+
+$('#btn_type').click(function(event){
+	event.preventDefault();	
+	var type_name = $('#txt_type').val()
+	
+	$.ajax({
+			method: 'POST',
+			url: url_createtype,	
+			data: {name: type_name, _token: token}
+		})
+		.done(function(data){
+			$('#type').append($('<option>', {
+			    value: data,
+			    text: type_name,
+			    selected: true
+			}));
+			
+		})	
+	
+	$('#typeModal').modal('hide');
+});
+
+$('#btn_subject').click(function(event){
+	event.preventDefault();	
+	var subject_name = $('#txt_subject').val()
+	
+	$.ajax({
+			method: 'POST',
+			url: url_createsubject,	
+			data: {name: subject_name, _token: token}
+		})
+		.done(function(data){
+			$('#subject').append($('<option>', {
+			    value: data,
+			    text: subject_name,
+			    selected: true
+			}));
+			
+		})	
+	
+	$('#subjectModal').modal('hide');
+});
+
+$('#btn_local').click(function(event){
+	event.preventDefault();	
+	var local_name = $('#txt_local').val()
+	
+	$.ajax({
+			method: 'POST',
+			url: url_createlocal,	
+			data: {name: local_name, _token: token}
+		})
+		.done(function(data){
+			$('#local').append($('<option>', {
+			    value: data,
+			    text: local_name,
+			    selected: true
+			}));
+			
+		})	
+	
+	$('#localModal').modal('hide');
+});
+
+$('#addCriteria').click(function(event){
+	//var description = $("#slc_field option[value='"+this.value+"']").text()
+	//remove_link = "<a href='#' id='"+this.value+"' class='del_field text-danger' title='Remover item'> (x)</a>";
+	html_field = "<div class='form-row'>" +
+					"<div class='form-group col-md-1'>"+
+					"<select id='slcCriteria' name='slcCriteria[]' class='custom-select'>"+
+		                  "<option value='and' >E</option>"+
+		                  "<option value='or' >Ou</option>"+
+		                  "<option value='not' >Não</option>"+
+		                		              
+		            "</select> </div>"+
+		           " <div class='form-group col-md-5'>"+
+		            "  <input type='text' class='form-control' id='inputCriteria' name='inputCriteria[]' placeholder='Pesquisar'> </div>"+
+		            "<div class='form-group col-md-5'>"+
+		              "<select id='criteria' name='criteria[]' class='custom-select'>"+
+		                "<option>Selecione ...</option>"+
+		                  "<option value='subjects' >Assunto</option>"+
+		                  "<option value='types' >Tipologia</option>"+
+		                  "<option value='producers' >Produtor</option>"+
+		                  "<option value='locales' >Local</option>"+
+		                		              
+		            "</select> </div>"+
+		            "<div class='form-group col-md-1'>"+
+		              "<a href='#' class='delcriteria btn btn-danger'>x</a>"+
+		            "</div> </div>"
+	$('#first_criteria').append(html_field)
+
+});
 
 
+$(document).on('click', '.delcriteria', function(event){
+	event.preventDefault();
+	$(event.target.parentNode.parentNode).remove()
+});
 
+setTimeout(function(){
+    //do what you need here
+    $('.alert.alert-success').alert('close')
+}, 5000);
+
+setTimeout(function(){
+    //do what you need here
+    $('.alert.alert-danger').alert('close')
+}, 5000);
+
+$('ul.pagination li').addClass('page-item')
+$('ul.pagination li a').addClass('page-link')
+$('ul.pagination li span').addClass('page-link')

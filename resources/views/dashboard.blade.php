@@ -35,7 +35,7 @@
         <div class="col-sm-3">        
           <div class="card">
             @if(count($collection->objects()->where('type','jpg')->get()) > 0)
-            <img src="{{Storage::url($collection->objects()->where('type','jpg')->first()->path)}}" class="rounded float-right" alt="{{Storage::url($collection->objects()->where('type','jpg')->first()->path)}}">
+            <img src="{{Storage::url($collection->objects()->where('type','jpg')->first()->path)}}" class="card-img-top" alt="{{Storage::url($collection->objects()->where('type','jpg')->first()->path)}}">
             @endif
              <div class="card-body">
               

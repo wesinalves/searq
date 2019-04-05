@@ -25,7 +25,8 @@ Route::get('/results-by', 'HomeController@results_by')->name('results_by');
 Route::get('/results-by-name', 'HomeController@results_by_name')->name('results_by_name');
 Route::get('/quick_results', 'HomeController@quick_results')->name('quick_results');
 Route::get('/advanced_results', 'HomeController@advanced_results')->name('advanced_results');
-Route::get('/search-by/{descritor}', 'HomeController@search_by')->name('search_by');
+Route::get('/search-by/{descritor}/letter/{letter?}', 'HomeController@search_by')->name('search_by');
+
 
 Route::get('/', 'HomeController@search')->name('search');
 Route::post('/user-logout', 'Auth\LoginController@logout')->name('logout');

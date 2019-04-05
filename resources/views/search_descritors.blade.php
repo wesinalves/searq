@@ -20,7 +20,7 @@
           <label for="type">{{$name_descritor}}</label>
           <input type="text" class="form-control mx-sm-3" name="txt_name">
           <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="position" value="start">
+            <input class="form-check-input" type="radio" name="position" value="start" checked>
             <label class="form-check-label" for="inlineRadio1">Iniciado por...</label>
           </div>
           <div class="form-check form-check-inline">
@@ -36,17 +36,16 @@
 
       <br>
 
-      <form id="letter-form" action="{{route('quick_results')}}" method="get">
-        
-      	<p>Busca Rápida 
+             
+      	<p>Filtrar:
           @foreach($letters as $letter)
-              <button type="submit" class="btn btn-primary mb-2" value="{{$letter}}" name="letter">{{$letter}}</button>
+              <a href="{{route('search_by',['descritor'=>$descritor,'letter'=>$letter])}}" class="btn btn-primary mb-2">{{$letter}}</a>
             
           @endforeach
         </p>
         
         <input type="hidden" name="descritor" value="{{$descritor}}">
-      </form>
+      
 
 
       <form action="{{route('results_by')}}" method="get">
@@ -71,6 +70,8 @@
             
             <input type="hidden" name="descritor" value="{{$descritor}}">
             <button type="submit" class="btn btn-primary mb-2">Pesquisar</button>
+            <a href="{{route('search_by',['descritor'=>$descritor])}}"class="btn btn-light mb-2">Limpar Filtro</a>
+          
       </form>
 
       
